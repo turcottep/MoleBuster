@@ -1,13 +1,16 @@
 package com.example.philippe.molebuster;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,14 +40,20 @@ public class JeuActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     //Si on clique sur une taupe
-                    //Toast.makeText(JeuActivity.this, "WOOO ca marche", Toast.LENGTH_SHORT).show();
-                    if (listeTaupes.get(finalI).estSortie()) {
-                        listeTaupes.get(finalI).rentrer();
-                        joueur.addScore(10);
-                        ((TextView) findViewById(R.id.scoreJoueur)).setText(String.valueOf(joueur.getScore()));
-                        joueur.addNiveau();
-                        System.out.println("niveau = " + joueur.getNiveau());
+
+                    if (joueur.estJoue()) {
+                        //SI la partie est en cours
+
+                        if (listeTaupes.get(finalI).estSortie()) {
+                            listeTaupes.get(finalI).rentrer();
+                            joueur.addScore(10);
+                            DecimalFormat df = new DecimalFormat("#.##");
+                            ((TextView) findViewById(R.id.scoreJoueur)).setText(df.format(joueur.getScore()));
+                            joueur.addNiveau();
+                            System.out.println("niveau = " + joueur.getNiveau());
+                        }
                     }
+
                 }
             });
         }
@@ -56,12 +65,45 @@ public class JeuActivity extends AppCompatActivity {
             public void run() {
                 //i = 0;
                 // upadte textView here
+                if (joueur.estJoue()){
+                    //Si le jeu est en cours
 
-                handler.postDelayed(this, joueur.getNiveau()); // set time here to refresh textView
-                //System.out.println(i++);
-                int randIndex = (int) (Math.random() * 9);
-                System.out.println("pop : " + randIndex);
-                listeTaupes.get(randIndex).sortir();
+                    handler.postDelayed(this, joueur.getNiveau()); // set time here to refresh textView
+
+                    int randIndex = (int) (Math.random() * 9);
+                    System.out.println("pop : " + randIndex);
+                    listeTaupes.get(randIndex).sortir();
+
+                    //checker si les taupes sont sorties depuis trop longtemps
+                    for (Taupe t:listeTaupes){
+                        if (t.estSortie()){
+                            if (Calendar.getInstance().getTimeInMillis() - t.getTempsSortie() >2000 ){
+                                //Arreter le jeu
+                                t.sauvee();
+                                joueur.stop();
+                                Toast.makeText(JeuActivity.this, "GAME OVER : " , Toast.LENGTH_SHORT).show();
+                                System.out.println("MORT " + "TEMPS = " + (Calendar.getInstance().getTimeInMillis() - t.getTempsSortie()) + " taupe = " + t.getImageButton().getId());
+                            }
+                        }
+                    }
+                } else {
+                    handler.postDelayed(this, 1000); // set time here to refresh textView
+                    if (joueur.getGoToHighScore()){
+                        final Button nextButton = (Button) findViewById(R.id.nextButton);
+                        nextButton.setVisibility(View.VISIBLE);
+                        nextButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //when play is clicked show stop button and hide play button
+                                Intent intent = new Intent(JeuActivity.this, HighScoreActivity.class);
+                                intent.putExtra("nom",joueur.getNom());
+                                intent.putExtra("score",joueur.getScore());
+                                view.getContext().startActivity(intent);
+                            }
+                        });
+                    }
+                   joueur.setGoToHighScore(true);
+                }
 
             }
         });

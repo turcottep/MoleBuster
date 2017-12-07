@@ -2,6 +2,8 @@ package com.example.philippe.molebuster;
 
 import android.widget.ImageButton;
 
+import java.util.Calendar;
+
 /**
  * Created by Philippe on 2017-12-06.
  */
@@ -10,6 +12,7 @@ public class Taupe {
     private Boolean sortie;
     //private int adresseImage;
     private ImageButton imageButton;
+    private long tempsSortie;
 
     public Taupe(ImageButton imageButton) {
         this.sortie = false;
@@ -36,6 +39,14 @@ public class Taupe {
     public void sortir(){
         sortie = true;
         imageButton.setImageResource(R.drawable.mole);
+        tempsSortie = Calendar.getInstance().getTimeInMillis();
     }
 
+    public long getTempsSortie() {
+        return tempsSortie;
+    }
+
+    public void sauvee(){
+        imageButton.setImageResource(R.drawable.sauvee);
+    }
 }
