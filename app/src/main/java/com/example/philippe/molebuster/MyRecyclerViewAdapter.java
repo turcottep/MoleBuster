@@ -23,6 +23,11 @@ import java.util.List;
  * Created by Philippe on 2017-12-02.
  */
 
+/**
+ * Classe trouvée sur internet qui gère le RecycleurView
+ * https://stackoverflow.com/questions/39238674/recyclerview-viewholder-oncreateviewholder-view-binding-and-onbindviewholder
+ */
+
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
 
     private List<Joueur> mData = Collections.emptyList();
@@ -57,7 +62,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the textview in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (mData.get(position).getCourant()){
+        //Si le joueur est actif, le mettre en gras
+        if (mData.get(position).estActif()){
             holder.myTextView1.setTypeface(Typeface.DEFAULT_BOLD);
             holder.myTextView2.setTypeface(Typeface.DEFAULT_BOLD);
         }
@@ -99,6 +105,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     // convenience method for getting data at click position
 
+    //Donne le score du joueur actif
     public double getScore(int id) {
         //return mData.get(id).getNbBananas();
         return mData.get(id).getScore();

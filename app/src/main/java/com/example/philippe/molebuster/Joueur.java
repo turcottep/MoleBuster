@@ -6,21 +6,26 @@ import android.support.annotation.NonNull;
  * Created by Philippe on 2017-12-05.
  */
 
+/**
+ * Classe qui conserve le nom, le score ainsi que d'autrews variables nécessaires au jeu
+ */
 public class Joueur implements Comparable<Joueur> {
     private String nom;
     private double score;
-    private Boolean courant;
-    private Boolean joue;
+    private Boolean actif; //est actif
     private Boolean goToHighScore;
 
     public int getNiveau() {
         return niveau;
     }
 
+    /**
+     * rend le jeu plus difficile en diminuant le temps entre chaque apparition de taupe
+     */
     public void addNiveau() {
         if (niveau > 300) {
             niveau = (int) (niveau - Math.sqrt(niveau));
-        } else if (niveau > 200) niveau--;
+        } else if (niveau > 150) niveau--;
     }
 
     private int niveau;
@@ -29,23 +34,41 @@ public class Joueur implements Comparable<Joueur> {
         return goToHighScore;
     }
 
+    /**
+     * Boolean qui est utilisé lorssque la partie fini
+     * @param goToHighScore si on va vers l'Activity highscore
+     */
     public void setGoToHighScore(Boolean goToHighScore) {
         this.goToHighScore = goToHighScore;
     }
 
-    public Joueur(String nom, double score, Boolean courant) {
+    /**
+     * Constructeur par défaut
+     * @param nom nom du joueur
+     * @param score score du joueur
+     * @param actif si le joueur est actif
+     */
+    public Joueur(String nom, double score, Boolean actif) {
         this.nom = nom;
         this.score = score;
-        this.courant = courant;
-        this.niveau = 2000;
-        this.joue = true;
-        this.goToHighScore=false;
+        this.actif = actif;
+        this.niveau = 2000; //niveau initial
+        this.goToHighScore = false;
     }
 
+    /**
+     * Constructeur
+     * @param nom nom du joueur
+     * @param score score du joueur
+     */
     public Joueur(String nom, double score) {
         this(nom, score, false);
     }
 
+    /**
+     * Constructeur
+     * @param nom nom du joueur
+     */
     public Joueur(String nom) {
         this(nom, 0, false);
     }
@@ -54,20 +77,15 @@ public class Joueur implements Comparable<Joueur> {
         return nom;
     }
 
-    public Boolean getCourant() {
-        return courant;
+    /**
+     * rend le joueur inactif
+     */
+    public void stop() {
+        this.actif = false;
     }
 
-    public void setCourant(Boolean courant) {
-        this.courant = courant;
-    }
-
-    public void stop(){
-        this.joue = false;
-    }
-
-    public Boolean estJoue(){
-        return joue;
+    public Boolean estActif() {
+        return actif;
     }
 
     public void setNom(String nom) {

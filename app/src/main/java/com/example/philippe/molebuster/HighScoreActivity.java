@@ -20,18 +20,24 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * gère l'activité highscore, lit le fichier les contenants, le met à jour et offre un bouton rejouer
+ */
 public class HighScoreActivity extends AppCompatActivity {
 
     private MyRecyclerViewAdapter adapter;
     private String FILE = "highscore.txt";
 
     @Override
+    /**
+     * création de l'activity
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_high_score);
 
-        ResetHighScore();
-        LoadHighScore();
+        //ResetHighScore();
+        //LoadHighScore(); //load un exemple de highscore
 
         //LIRE FICHIER
         ArrayList<Joueur> listeJoueurs = LireFichierHighScore();
@@ -55,7 +61,7 @@ public class HighScoreActivity extends AppCompatActivity {
         //CLasser liste
         Collections.sort(listeJoueurs);
 
-
+        //Créer le recyclerView
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycleur);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MyRecyclerViewAdapter(this, listeJoueurs);
@@ -80,6 +86,11 @@ public class HighScoreActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * lit les noms et les score dans le fichier de highscore et retourne une liste faite avec
+     * @return la liste de joueurs avec leur noms et leur score
+     */
     private ArrayList<Joueur> LireFichierHighScore() {
         ArrayList<Joueur> listeJoueurs = new ArrayList<>();
 
@@ -119,21 +130,12 @@ public class HighScoreActivity extends AppCompatActivity {
         return listeJoueurs;
     }
 
-
+    /**
+     * Ajoute le nom et le score du joueur qui vient de joueur au fichier de highscore
+     * @param nomCourant nom du joueur
+     * @param scoreCourant score du joueur
+     */
     private void EcrireFichier(String nomCourant, double scoreCourant) {
-
-        /*try {
-
-            FileOutputStream fileout = openFileOutput(FILE, MODE_APPEND);
-            OutputStreamWriter writer = new OutputStreamWriter(fileout);
-            writer.write("\n");
-            writer.write(nomCourant);
-            writer.write("\n");
-            writer.write(String.valueOf(scoreCourant));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         BufferedWriter writer = null;
         try {
@@ -160,7 +162,9 @@ public class HighScoreActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * vide le fichier de highscore
+     */
     private void ResetHighScore() {
 
         try {
@@ -173,7 +177,9 @@ public class HighScoreActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * load un exemple de highscore situé dans /assets
+     */
     private void LoadHighScore() {
 
         BufferedReader reader = null;

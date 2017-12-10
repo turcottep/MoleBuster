@@ -16,12 +16,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * activity où on joue au jeu. Lorsque la partie est finie, mène vers l'Activity highscore
+ */
 public class JeuActivity extends AppCompatActivity {
 
     private final static int[] adresses = {R.id.mole1, R.id.mole2, R.id.mole3, R.id.mole4, R.id.mole5, R.id.mole6, R.id.mole7, R.id.mole8, R.id.mole9};
     private final int TEMPSMAX = 1000; //temps avant que les taupes ne retournent dans leur trou
-    private final int NIVEAUINITIAl = 2000;
+    private final int NIVEAUINITIAl = 2000; //temps initial entre l'appartition de chaque taupe
 
+    /**
+     * Création de la classe
+     * @param savedInstanceState paramètre par défaut
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +40,7 @@ public class JeuActivity extends AppCompatActivity {
             nomJoueur = extras.getString("nom");
         }
 
-        final Joueur joueur = new Joueur(nomJoueur);
+        final Joueur joueur = new Joueur(nomJoueur, 0, true);
         final ArrayList<Taupe> listeTaupes = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
             listeTaupes.add(new Taupe((ImageButton) findViewById(adresses[i])));
@@ -43,10 +50,11 @@ public class JeuActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //Si on clique sur une taupe
 
-                    if (joueur.estJoue()) {
+                    if (joueur.estActif()) {
                         //SI la partie est en cours
 
                         if (listeTaupes.get(finalI).estSortie()) {
+                            //rentrer la taupe, ajuster le niveau, ajouter et afficher le score
                             listeTaupes.get(finalI).rentrer();
                             joueur.addScore(10);
                             DecimalFormat df = new DecimalFormat("#.##");
@@ -64,9 +72,9 @@ public class JeuActivity extends AppCompatActivity {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                //i = 0;
-                // upadte textView here
-                if (joueur.estJoue()) {
+                //update des taupes
+
+                if (joueur.estActif()) {
                     //Si le jeu est en cours
 
                     handler.postDelayed(this, joueur.getNiveau()); // set time here to refresh textView
@@ -94,8 +102,10 @@ public class JeuActivity extends AppCompatActivity {
                         }
                     }
                 } else {
+                    //une fois la partie terminée, attendre 1 secondes
                     handler.postDelayed(this, 1000); // set time here to refresh textView
                     if (joueur.getGoToHighScore()) {
+                        //afficher un bouton qui mène vers les highscore
                         final Button nextButton = (Button) findViewById(R.id.nextButton);
                         nextButton.setVisibility(View.VISIBLE);
                         nextButton.setOnClickListener(new View.OnClickListener() {

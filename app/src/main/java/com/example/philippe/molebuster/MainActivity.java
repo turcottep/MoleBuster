@@ -10,12 +10,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * Activity principale, avec image de backgourn, case qui demande le nom et bouton vers l'Activity jeu
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mGreetingText;
     private EditText mNameInput;
     private Button mPlayButton;
 
+    /**
+     * Création de l'activity
+     * @param savedInstanceState paramètre par défaut
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
         mNameInput = (EditText) findViewById(R.id.activity_main_name_input);
         mPlayButton = (Button) findViewById(R.id.activity_main_play_btn);
-
         mPlayButton.setEnabled(false);
 
+        //si le nom est bel et bien écrit
         mNameInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //bouton qui mène vers l'activity jeu
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
