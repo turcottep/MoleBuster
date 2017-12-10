@@ -22,34 +22,34 @@ import java.util.Collections;
 
 public class HighScoreActivity extends AppCompatActivity {
 
-    MyRecyclerViewAdapter adapter;
+    private MyRecyclerViewAdapter adapter;
+    private String FILE = "highscore.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_high_score);
 
-        ResetHighScore("highscore.txt");
-        LoadHighScore("highscore.txt");
+        ResetHighScore();
+        LoadHighScore();
 
         //LIRE FICHIER
-        ArrayList<Joueur> listeJoueurs = LireFichierHighScore("highscore.txt");
-        for (Joueur j : listeJoueurs) {
+        ArrayList<Joueur> listeJoueurs = LireFichierHighScore();
+
+
+       /* for (Joueur j : listeJoueurs) {
             j.show();
-        }
+        }*/
 
         //ADD CURRENT PLAYER
         //METTRE SCORE EN GRAS
         Bundle extras = getIntent().getExtras();
-        String nomCourant = "simon";
-        double scoreCourant = 12;
+        String nomCourant = "";
+        double scoreCourant = 0;
         if (extras != null) {
             nomCourant = extras.getString("nom");
             scoreCourant = extras.getDouble("score");
-        } else {
-            System.out.println("RIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIP");
         }
-        System.out.println("EXTRAS = " + extras.getString("nom"));
         listeJoueurs.add(new Joueur(nomCourant, scoreCourant, true));
 
         //CLasser liste
@@ -64,12 +64,12 @@ public class HighScoreActivity extends AppCompatActivity {
 
 
         //ECRIRE FICHIER
-        EcrireFichier(nomCourant, scoreCourant, "highscore.txt");
+        EcrireFichier(nomCourant, scoreCourant);
 
 
         //REJOUER
         final String nomAPasser = nomCourant;
-        Button boutonRejouer = (Button)findViewById(R.id.boutonRejouer);
+        Button boutonRejouer = (Button) findViewById(R.id.boutonRejouer);
         boutonRejouer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,28 +80,92 @@ public class HighScoreActivity extends AppCompatActivity {
         });
     }
 
-    private void EcrireFichier(String nomCourant, double scoreCourant, String file) {
+    private ArrayList<Joueur> LireFichierHighScore() {
+        ArrayList<Joueur> listeJoueurs = new ArrayList<>();
 
+        BufferedReader reader = null;
         try {
+            reader = new BufferedReader(new InputStreamReader(openFileInput(FILE)));
 
-            FileOutputStream fileout = openFileOutput("highscore.txt", MODE_APPEND);
+            // do reading, usually loop until end of file reading
+            String mLine;
+            String mLine2;
+            String nom;
+            double score;
+
+            while ((mLine = reader.readLine()) != null && (mLine2 = reader.readLine()) != null) {
+                //process line
+                nom = mLine;
+                score = Double.parseDouble(mLine2);
+                //System.out.println("LE FICHIER EST : ");
+                //System.out.println("L1 : " + mLine + " \n " + "L2 : " + mLine2);
+                listeJoueurs.add(new Joueur(nom, score));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    //log the exception
+                    e.printStackTrace();
+                }
+            }
+        }
+        return listeJoueurs;
+    }
+
+
+    private void EcrireFichier(String nomCourant, double scoreCourant) {
+
+        /*try {
+
+            FileOutputStream fileout = openFileOutput(FILE, MODE_APPEND);
             OutputStreamWriter writer = new OutputStreamWriter(fileout);
-            System.out.println("LE FICHIER EST : " + getFilesDir());
+            writer.write("\n");
+            writer.write(nomCourant);
+            writer.write("\n");
+            writer.write(String.valueOf(scoreCourant));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(openFileOutput(FILE, MODE_APPEND)));
+
             writer.write(nomCourant);
             writer.write("\n");
             writer.write(String.valueOf(scoreCourant));
             writer.write("\n");
-            writer.close();
+            //System.out.println("J'ÉCRIS: " + nomCourant + " + " + scoreCourant);
+
+
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    //log the exception
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    private void ResetHighScore(String file) {
+
+    private void ResetHighScore() {
 
         try {
 
-            FileOutputStream fileout = openFileOutput(file, MODE_PRIVATE);
+            FileOutputStream fileout = openFileOutput(FILE, MODE_PRIVATE);
             OutputStreamWriter writer = new OutputStreamWriter(fileout);
             writer.close();
         } catch (IOException e) {
@@ -109,18 +173,19 @@ public class HighScoreActivity extends AppCompatActivity {
         }
     }
 
-    private void LoadHighScore(String file) {
+
+    private void LoadHighScore() {
 
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open(file)));
-            FileOutputStream fileout = openFileOutput(file, MODE_APPEND);
+            reader = new BufferedReader(new InputStreamReader(getAssets().open(FILE)));
+            FileOutputStream fileout = openFileOutput(FILE, MODE_APPEND);
             OutputStreamWriter writer = new OutputStreamWriter(fileout);
 
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 //process line
-                System.out.println("LINE = " + mLine);
+                //System.out.println("LINE = " + mLine);
                 writer.write(mLine);
                 writer.write("\n");
             }
@@ -140,45 +205,5 @@ public class HighScoreActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-
-    private ArrayList<Joueur> LireFichierHighScore(String file) {
-        ArrayList<Joueur> listeJoueurs = new ArrayList<>();
-
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(
-                    new InputStreamReader(openFileInput(file)));
-
-            // do reading, usually loop until end of file reading
-            String mLine;
-            String mLine2;
-            String nom;
-            double score;
-
-            while ((mLine = reader.readLine()) != null && (mLine2 = reader.readLine()) != null) {
-                //process line
-                nom = mLine;
-                score = Double.parseDouble(mLine2);
-                listeJoueurs.add(new Joueur(nom, score));
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    //log the exception
-                    e.printStackTrace();
-                }
-            }
-        }
-        return listeJoueurs;
     }
 }

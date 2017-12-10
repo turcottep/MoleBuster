@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/herbe"
     tools:context=".JeuActivity">
 
     <LinearLayout
@@ -15,17 +16,15 @@
 
         <TextView
             android:id="@+id/textView"
+            android:background="@color/colorGUI"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
-            android:text="Temps" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+            android:text="Tappez les taupes quand elles apparaissent" />
 
     </LinearLayout>
 
@@ -33,13 +32,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/herbe" />
-
 
 
         <GridLayout
@@ -123,6 +115,7 @@
                 android:adjustViewBounds="true"
                 android:maxHeight="60dp"
                 android:maxWidth="60dp"
+                android:cropToPadding="false"
                 android:src="@drawable/trou" />
 
 
@@ -134,11 +127,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="25dp"
             android:layout_marginRight="2dp"
+            android:layout_marginEnd="2dp"
             android:text="Next"
             android:visibility="invisible"
-            android:layout_marginEnd="2dp"
+
             android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
@@ -148,13 +141,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="15dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorGUI"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/scoreTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="textEnd"
+            android:textAlignment="center"
             android:layout_gravity="center"
             android:textSize="20dp"
             android:layout_weight="1"
